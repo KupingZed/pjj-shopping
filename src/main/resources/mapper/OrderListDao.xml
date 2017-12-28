@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iotek.dao.OrderListDao">
+    <resultMap id="orderListBaseMap" type="OrderList">
+        <id column="ol_id" property="id"></id>
+        <result column="TOTAL_MONEY" property="totalMoney"></result>
+        <result column="CUSTOMER_ID" property="customerId"></result>
+        <result column="ORDER_STATE" property="orderState"></result>
+        <result column="ORDER_CREATE_TIME" property="orderCreateTime"></result>
+        <result column="IS_PAY" property="isPay"></result>
+        <!--<collection property="orderItemList" column="{orderListId=ol_id}" ofType="OrderItem" select="com.iotek.dao.OrderItemDao.queryOrderItemByOLID"></collection>-->
+    </resultMap>
+                    <!--返回的是用户和订单-->          <!--继承订单的返回-->    <!--类型-->
+   <!-- <resultMap id="customerOrderListMap" extends="orderListMap" type="OrderList">
+        <association property="customer" resultMap="com.iotek.dao.CustomerDao.customerBaseMap">
+        </association>
+    </resultMap>-->
+    <sql id="selectOrderList">
+        SELECT  ID ol_id,
+        TOTAL_MONEY,
+        ORDER_STATE,
+        ORDER_CREATE_TIME,
+        IS_PAY
+        FROM   PAN.ORDER_LIST
+    </sql>
+
+    <select id="query" parameterType="OrderList" resultMap="orderListBaseMap">
+        <include refid="selectOrderList"></include>
+        <where>
+            <choose>
+                <when test="id!=null">
+                    AND ID=#{id}
+                </when>
+                <otherwise>
+                    AND 1=2
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+    <select id="queryOrderListByCID" parameterType="OrderList" resultMap="orderListBaseMap">
+        <include refid="selectOrderList"></include>
+        <where>
+            <choose>
+                <when test="customerId!=null">
+                    AND CUSTOMER_ID=#{customerId}
+                </when>
+                <otherwise>
+                    AND 1=2
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+
+    <!--查询-->                                   <!--查询的结果返回值-->             <!--类型-->
+    <!--<select id="queryOrderList" resultMap="customerOrderListMap" parameterType="OrderList">
+        SELECT  ol.ID ol_id
+        ,ol.TOTAL_MONEY
+        ,ol.ORDER_STATE
+        ,ol.ORDER_CREATE_TIME
+        ,ol.IS_PAY,
+        ol.CUSTOMER_ID
+        FROM   PAN.ORDER_LIST   ol
+        , PAN.CUSTOMER c WHERE
+        ol.CUSTOMER_ID=c.ID  AND   ol.ID=#{id}
+    </select>-->
+</mapper>

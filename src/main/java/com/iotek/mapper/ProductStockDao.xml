@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iotek.dao.ProductStockDao">
+    <resultMap id="productStockBaseMap" type="ProductStock">
+        <id column="psk_id" property="id"></id>
+        <result column="PRODUCT_ID"></result>
+        <result column="STOCK_NUMBER"></result>
+        <result column="STOCK_MODIFIED_TIME"></result>
+        <result column="STOCK_CREATE_TIME"></result>
+    </resultMap>
+    <sql id="selectProductStock">
+        SELECT ID psk_id,
+        PRODUCT_ID,
+        STOCK_NUMBER,
+        STOCK_MODIFIED_TIME,
+        STOCK_CREATE_TIME
+        FROM PAN.PRODUCT_STOCK
+    </sql>
+    <resultMap id="productStockInfoMap" type="ProductStock" extends="productStockBaseMap">
+        <association property="product" column="{id=PRODUCT_ID}" javaType="Product" select="com.com.iotek.dao.ProductDao.query"></association>
+    </resultMap>
+    <select id="queryProductStockById" resultMap="productStockBaseMap">
+        <include refid="selectProductStock"></include>
+        <where>
+            <choose>
+                <when test="productId!=null">
+                    AND PRODUCT_ID=#{productId}
+                </when>
+                <otherwise>
+                    AND 1=2
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+</mapper>
